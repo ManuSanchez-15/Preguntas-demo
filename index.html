@@ -545,7 +545,9 @@
         async function loadQuestions() {
             const sheetLoaded = await loadQuestionsFromSheetID();
             if (!sheetLoaded) {
-                availableQuestions = [...FALLBACK_QUESTIONS]; 
+                availableQuestions = [...FALLBACK_QUESTIONS];
+                let questionsHistory = []; 
+                const MAX_HISTORY = 5; 
                 shuffleArray(availableQuestions);
                 loadingStatus.textContent += ' Soal bawaan digunakan.';
                 questionCountDisplay.textContent = `Total Soal: ${availableQuestions.length} soal (Bawaan)`;
@@ -555,7 +557,7 @@
         
         // --- LOGIKA GAME ---
 
-       // --- KODE BARU (Mengambil Soal Acak Tanpa Menghapus) ---
+   // --- KODE BARU (Mengambil Soal Acak Tanpa Menghapus) ---
 function getNextQuestion() {
     // Memastikan ada soal
     if (availableQuestions.length === 0) {
@@ -567,6 +569,7 @@ function getNextQuestion() {
 
     // Ganti .pop() dengan pemilihan indeks acak
     const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+    
     
     // TIDAK menggunakan .pop() lagi. Cukup ambil data soalnya.
     return availableQuestions[randomIndex]; 
