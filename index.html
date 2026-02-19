@@ -950,7 +950,7 @@ async function loadQuestionsFromSheetID() {
         availableQuestions = loadedQuestions;
         shuffleArray(availableQuestions); 
 
-        loadingStatus.textContent = 'Soal berhasil dimuat dari Google Sheet!';
+        loadingStatus.textContent = 'Preguntas de la plantilla cargadas';
         questionCountDisplay.textContent = `Total Soal: ${availableQuestions.length} soal (ID: ${currentSheetID.substring(0, 5)}...)`;
         startButton.disabled = false;
         return true;
@@ -1250,6 +1250,7 @@ function runConfetti() {
 
 
 </html>
+
 
 
 
