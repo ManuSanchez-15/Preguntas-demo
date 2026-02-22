@@ -952,7 +952,7 @@ async function loadQuestionsFromSheetID() {
         shuffleArray(availableQuestions); 
 
         loadingStatus.textContent = 'Preguntas de la plantilla cargadas';
-        questionCountDisplay.textContent = `Total Soal: ${availableQuestions.length} soal (ID: ${currentSheetID.substring(0, 5)}...)`;
+        questionCountDisplay.textContent = `Preguntas totales: ${availableQuestions.length} soal (ID: ${currentSheetID.substring(0, 5)}...)`;
         startButton.disabled = false;
         return true;
 
@@ -1251,6 +1251,7 @@ function runConfetti() {
 
 
 </html>
+
 
 
 
