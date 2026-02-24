@@ -917,50 +917,52 @@ function getSheetIDFromURL() {
 
 async function loadQuestionsFromSheetID() {
     currentSheetID = getSheetIDFromURL();
-    loadingStatus.textContent = 'Memuat soal dari Google Sheet...';
+    loadingStatus.textContent = 'Cargando datos...';
     startButton.disabled = true;
 
     const API_URL = `https://docs.google.com/spreadsheets/d/${currentSheetID}/gviz/tq?tqx=out:csv&gid=0`; 
 
     try {
         const response = await fetch(API_URL);
-        if (!response.ok) {
-            throw new Error(`Gagal memuat: ${response.status} ${response.statusText}.`);
-        }
         const csvText = await response.text();
-
         const rows = csvText.trim().split('\n');
+        
         let loadedQuestions = [];
 
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
             const cells = row.match(/(".*?"|[^,]+)/g) || []; 
             const cleanCells = cells.map(cell => cell.trim().replace(/^"|"$/g, ''));
 
-            if (cleanCells.length >= 4 && cleanCells[0].trim() !== 'Pertanyaan' && cleanCells[0].trim() !== '') {
+            // SI ES LA PRIMERA FILA: La usamos como título
+            if (index === 0) {
+                const tituloExcel = cleanCells[0];
+                if (tituloExcel && tituloExcel !== 'Pertanyaan') {
+                    // Actualizamos el título en el Lobby y en el Juego
+                    document.querySelector('#lobby-screen h2').textContent = tituloExcel;
+                    document.querySelector('#game-container h1').textContent = tituloExcel;
+                }
+            } 
+            // SI SON LAS SIGUIENTES FILAS: Son preguntas
+            else if (cleanCells.length >= 4 && cleanCells[0] !== '') {
                 loadedQuestions.push([
-                    cleanCells[0], 
-                    cleanCells[1], 
-                    cleanCells[2], 
-                    cleanCells[3]  
+                    cleanCells[0], cleanCells[1], cleanCells[2], cleanCells[3]
                 ]);
             }
         });
 
-        if (loadedQuestions.length === 0) {
-            throw new Error('Tidak ada soal yang valid ditemukan di Sheet. Cek format (4 Kolom, tanpa header).');
-        }
+        if (loadedQuestions.length === 0) throw new Error('No hay preguntas');
 
         availableQuestions = loadedQuestions;
         shuffleArray(availableQuestions); 
 
-        loadingStatus.textContent = 'Preguntas de la plantilla cargadas';
-        questionCountDisplay.textContent = `Preguntas totales: ${availableQuestions.length} soal (ID: ${currentSheetID.substring(0, 5)}...)`;
+        loadingStatus.textContent = '¡Título y preguntas cargados!';
+        questionCountDisplay.textContent = `Total: ${availableQuestions.length} preguntas encontradas.`;
         startButton.disabled = false;
         return true;
 
     } catch (error) {
-        console.error('Error memuat data dari Sheet:', error);
-        loadingStatus.textContent = `Gagal memuat soal dari Sheet: ${error.message}. Menggunakan soal bawaan.`;
+        console.error('Error:', error);
+        loadingStatus.textContent = 'Error al conectar con Excel. Usando modo local.';
         return false; 
     }
 }
@@ -1253,6 +1255,7 @@ function runConfetti() {
 
 
 </html>
+
 
 
 
