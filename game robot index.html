@@ -691,7 +691,7 @@
 
             <p style="font-weight: bold;">Cara Ganti Soal:</p>
 
-            <p>1. Atur Google Sheet Anda agar dapat diakses "Siapa saja yang memiliki link".</p>
+            <p>1. Configura la Hoja de cálculo de Google".</p>
 
             <p>2. Salin ID Sheet Anda dari link (antara <code style="background: #f0f0f0; padding: 2px 4px;">/d/</code> dan <code style="background: #f0f0f0; padding: 2px 4px;">/edit</code>).</p>
 
@@ -831,9 +831,9 @@
 
         <div id="message-area">
 
-            <h2 id="message-display">Siap Balapan!</h2>
+            <h2 id="message-display"> ¡Preparado para la carrera!</h2>
 
-            <button id="restart-btn" class="hidden">Kembali ke Lobi</button>
+            <button id="restart-btn" class="hidden">Volver</button>
 
         </div>
 
@@ -843,15 +843,15 @@
 
     <div id="creator-info-footer">
 
-        <p>Dibuat oleh: Ayu Elma Sari</p>
+        <p>Creado por: Manu Sánchez Montero</p>
 
         <div class="social-icons">
 
-            <div><i class="fab fa-instagram"></i> aes_435</div>
+            <div><i class="fab fa-instagram"></i> manu_sanchez_montero/div>
 
-            <div><i class="fab fa-tiktok"></i> aes435_</div>
+            <div><i class="fab fa-tiktok"></i> elmaestromanu</div>
 
-            <div><i class="fab fa-facebook"></i> Ayu Elma Sari</div>
+            <div><i class="fab fa-facebook"></i> El maestro Manu</div>
 
         </div>
 
@@ -889,7 +889,7 @@ const players = playerKeys.map(p => ({
     element: document.getElementById(`player-icon-p${p}`),
     position: 0,
     correctAnswer: '', 
-    questionText: 'Siap!',
+    questionText: '¿Preparado?!',
     questionDisplay: document.getElementById(`q-p${p}`),
     keypad: document.querySelector(`[data-keypad="${p}"]`),
     options: [],
@@ -1075,7 +1075,7 @@ function initializeRace() {
     players.forEach(p => { 
         p.position = 0;
         p.element.style.left = '5px'; 
-        p.questionDisplay.textContent = 'Siap!';
+        p.questionDisplay.textContent = 'Preparado!';
         updateOptionsDisplay(p); 
         deactivateKeypad(p.keypad);
     });
