@@ -6,10 +6,11 @@
     <title>Carrera de Coches - El Maestro Manu</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        /* --- ESTILOS GENERALES --- */
         body {
-            touch-action: manipulation; 
-            user-select: none; 
-            font-family: sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
             background-color: #f0f0f0;
             margin: 0;
@@ -18,87 +19,127 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         .hidden { display: none !important; }
 
         :root {
-            /* Colores de los paneles */
             --player1-color: #007bff;
             --player2-color: #dc3545;
             --player3-color: #ffc107;
             --player4-color: #28a745;
-            --track-color: #333;
+            --track-bg: #444;
         }
 
-        /* --- PISTA DE CARRERAS --- */
+        /* --- ÁREA DE CARRERA (ASFALTO) --- */
         #race-arena {
             width: 95%;
             max-width: 1000px;
-            height: 300px;
-            background-color: var(--track-color);
+            height: 350px;
+            background-color: var(--track-bg);
             position: relative;
-            border-radius: 10px;
-            border: 5px solid #222;
+            border-radius: 15px;
+            border: 6px solid #222;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             padding: 10px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .track {
             width: 100%;
-            height: 60px;
+            height: 70px;
             border-bottom: 2px dashed rgba(255,255,255,0.2);
             position: relative;
             display: flex;
-            align-items: center; /* Centra el coche verticalmente */
+            align-items: center;
         }
-
         .track:last-child { border-bottom: none; }
 
+        /* Línea de Meta */
         #finish-line {
             position: absolute;
             right: 0;
             top: 0;
-            width: 30px;
+            width: 40px;
             height: 100%;
-            background: repeating-linear-gradient(0deg, #fff, #fff 15px, #000 15px, #000 30px);
+            background: repeating-linear-gradient(0deg, #fff, #fff 20px, #000 20px, #000 40px);
             z-index: 2;
-            border-left: 2px solid gold;
+            border-left: 3px solid #ffd700;
         }
 
-        /* --- EL COCHE (EMOJI) --- */
+        /* --- EL COCHE (IMAGEN) --- */
         .player-icon {
             position: absolute;
             left: 10px;
-            font-size: 45px; /* Tamaño del coche */
-            transition: left 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            width: 80px; /* Tamaño de la imagen del coche */
+            height: auto;
+            transition: left 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
             z-index: 5;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
         }
 
-        /* --- INTERFAZ --- */
-        #lobby-screen { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .keypad-area-bottom { display: flex; gap: 10px; width: 98%; justify-content: center; margin-top: 10px; }
-        .player-panel { width: 22%; background: white; padding: 10px; border-radius: 10px; border-top: 8px solid; }
-        
+        /* --- PANELES DE PREGUNTAS --- */
+        .keypad-area-bottom {
+            display: flex;
+            gap: 10px;
+            width: 98%;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .player-panel {
+            width: 23%;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            border-top: 10px solid;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
         #panel-p1 { border-color: var(--player1-color); }
         #panel-p2 { border-color: var(--player2-color); }
         #panel-p3 { border-color: var(--player3-color); }
         #panel-p4 { border-color: var(--player4-color); }
 
-        .question-display { font-weight: bold; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        .keypad button { width: 100%; margin: 2px 0; padding: 10px; cursor: pointer; border-radius: 5px; border: 1px solid #ddd; background: #eee; font-weight: bold; }
-        
+        .question-display {
+            font-weight: bold;
+            font-size: 0.9em;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .keypad button {
+            width: 100%;
+            margin: 3px 0;
+            padding: 12px 5px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            font-weight: bold;
+            font-size: 0.85em;
+            transition: 0.2s;
+        }
+        .keypad button:active { background: #e2e6ea; transform: translateY(2px); }
+
+        /* --- OVERLAY INICIAL --- */
+        #lobby-screen {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
         #countdown-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); color: white; display: none;
-            justify-content: center; align-items: center; font-size: 150px; z-index: 100;
+            justify-content: center; align-items: center; font-size: 180px; z-index: 100;
         }
     </style>
 </head>
@@ -107,40 +148,49 @@
     <div id="countdown-overlay"></div>
 
     <div id="lobby-screen">
-        <h2>🏎️ GRAN PREMIO 🏎️</h2>
-        <button onclick="startGame()" style="padding: 20px 40px; font-size: 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 10px;">¡EMPEZAR!</button>
-        <p id="loading-status"></p>
+        <h1 style="color: #333;">🏎️ GRAN PREMIO SUV 🏎️</h1>
+        <button onclick="startGame()" style="padding: 20px 50px; font-size: 24px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 0 #1e7e34;">¡ARRANCAR!</button>
+        <p id="loading-status" style="margin-top:20px; color:#666;"></p>
     </div>
 
     <div id="game-container" class="hidden">
         <div id="race-arena">
             <div id="finish-line"></div>
-            <div class="track"><div id="player-icon-p1" class="player-icon">🏎️</div></div>
-            <div class="track"><div id="player-icon-p2" class="player-icon">🏎️</div></div>
-            <div class="track"><div id="player-icon-p3" class="player-icon">🏎️</div></div>
-            <div class="track"><div id="player-icon-p4" class="player-icon">🏎️</div></div>
+            
+            <div class="track">
+                <img id="player-icon-p1" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 1">
+            </div>
+            <div class="track">
+                <img id="player-icon-p2" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 2">
+            </div>
+            <div class="track">
+                <img id="player-icon-p3" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 3">
+            </div>
+            <div class="track">
+                <img id="player-icon-p4" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 4">
+            </div>
         </div>
 
         <div class="keypad-area-bottom">
-            <div id="panel-p1" class="player-panel"><div class="question-display" id="q-p1"></div><div class="keypad" data-keypad="1"><button data-key="A"></button><button data-key="B"></button><button data-key="C"></button></div></div>
-            <div id="panel-p2" class="player-panel"><div class="question-display" id="q-p2"></div><div class="keypad" data-keypad="2"><button data-key="A"></button><button data-key="B"></button><button data-key="C"></button></div></div>
-            <div id="panel-p3" class="player-panel"><div class="question-display" id="q-p3"></div><div class="keypad" data-keypad="3"><button data-key="A"></button><button data-key="B"></button><button data-key="C"></button></div></div>
-            <div id="panel-p4" class="player-panel"><div class="question-display" id="q-p4"></div><div class="keypad" data-keypad="4"><button data-key="A"></button><button data-key="B"></button><button data-key="C"></button></div></div>
+            <div id="panel-p1" class="player-panel"><div class="question-display" id="q-p1"></div><div class="keypad" data-keypad="1"><button></button><button></button><button></button></div></div>
+            <div id="panel-p2" class="player-panel"><div class="question-display" id="q-p2"></div><div class="keypad" data-keypad="2"><button></button><button></button><button></button></div></div>
+            <div id="panel-p3" class="player-panel"><div class="question-display" id="q-p3"></div><div class="keypad" data-keypad="3"><button></button><button></button><button></button></div></div>
+            <div id="panel-p4" class="player-panel"><div class="question-display" id="q-p4"></div><div class="keypad" data-keypad="4"><button></button><button></button><button></button></div></div>
         </div>
-        <h2 id="message-display"></h2>
-        <button id="restart-btn" class="hidden" onclick="location.reload()" style="padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px;">Reiniciar</button>
+
+        <h2 id="message-display" style="color: #333; margin-top: 15px;"></h2>
+        <button id="restart-btn" class="hidden" onclick="location.reload()" style="padding: 12px 25px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Jugar otra vez</button>
     </div>
 
     <script>
-        // Lógica simplificada para asegurar funcionamiento
-        const FALLBACK = [["5 + 5", "10", "8", "12"], ["Color Sol", "Amarillo", "Azul", "Rojo"], ["2 x 3", "6", "5", "9"], ["Día hoy", "Lunes", "Martes", "Sol"]];
+        const FALLBACK = [["¿Cuánto es 7x8?", "56", "54", "63"], ["Capital de España", "Madrid", "Barcelona", "Sevilla"], ["Color del cielo", "Azul", "Verde", "Rojo"], ["3 x 3", "9", "6", "12"], ["¿H2O es...?", "Agua", "Aire", "Sal"]];
         let players = [1,2,3,4].map(id => ({ id, pos: 0, el: document.getElementById(`player-icon-p${id}`), qEl: document.getElementById(`q-p${id}`), kp: document.querySelector(`[data-keypad="${id}"]`), locked: false, ans: '' }));
         let questions = [];
 
         async function loadQuestions() {
-            // Intentar cargar Google Sheets o usar Fallback
+            // Aquí podrías conectar con Google Sheets si lo deseas
             questions = [...FALLBACK];
-            document.getElementById('loading-status').textContent = "Sistema listo.";
+            document.getElementById('loading-status').textContent = "Motores listos. ¡Pulsa el botón!";
         }
 
         function startGame() {
@@ -170,19 +220,20 @@
             if(p.locked) return;
             if(val === p.ans) {
                 p.pos++;
-                const arenaWidth = document.getElementById('race-arena').offsetWidth - 80;
+                const arenaWidth = document.getElementById('race-arena').offsetWidth - 110; // Ajuste para que no se salga
                 p.el.style.left = (p.pos / 10) * arenaWidth + "px";
                 if(p.pos >= 10) { 
-                    document.getElementById('message-display').textContent = "GANADOR JUGADOR " + p.id;
+                    document.getElementById('message-display').textContent = "🏆 ¡EL COCHE " + p.id + " GANA LA CARRERA! 🏆";
                     document.getElementById('restart-btn').classList.remove('hidden');
-                    confetti(); 
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                     return;
                 }
                 nextQ(p);
             } else {
-                p.locked = true; p.qEl.textContent = "💥 ¡FALLO!";
+                p.locked = true; p.qEl.textContent = "💥 ¡MOTOR PARADO!";
+                p.qEl.style.color = "red";
                 await new Promise(r => setTimeout(r, 1500));
-                p.locked = false; nextQ(p);
+                p.locked = false; p.qEl.style.color = "black"; nextQ(p);
             }
         }
 
