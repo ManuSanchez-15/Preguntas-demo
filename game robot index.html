@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrera de Coches - El Maestro Manu</title>
+    <title>Carrera de SUVs - El Maestro Manu</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* --- ESTILOS GENERALES --- */
+        /* --- ESTILOS BASE --- */
         body {
             touch-action: manipulation;
             user-select: none;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background-color: #f0f0f0;
+            background-color: #e9ecef;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -29,36 +29,35 @@
             --player2-color: #dc3545;
             --player3-color: #ffc107;
             --player4-color: #28a745;
-            --track-bg: #444;
         }
 
-        /* --- ÁREA DE CARRERA (ASFALTO) --- */
+        /* --- PISTA DE CARRERAS (HORIZONTAL) --- */
         #race-arena {
             width: 95%;
-            max-width: 1000px;
-            height: 350px;
-            background-color: var(--track-bg);
+            max-width: 1100px;
+            height: 380px;
+            background-color: #333; /* Color Asfalto */
             position: relative;
             border-radius: 15px;
-            border: 6px solid #222;
+            border: 8px solid #222;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             padding: 10px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .track {
             width: 100%;
-            height: 70px;
-            border-bottom: 2px dashed rgba(255,255,255,0.2);
+            height: 80px;
+            border-bottom: 2px dashed rgba(255,255,255,0.3);
             position: relative;
             display: flex;
             align-items: center;
         }
         .track:last-child { border-bottom: none; }
 
-        /* Línea de Meta */
+        /* Meta a la derecha */
         #finish-line {
             position: absolute;
             right: 0;
@@ -67,36 +66,37 @@
             height: 100%;
             background: repeating-linear-gradient(0deg, #fff, #fff 20px, #000 20px, #000 40px);
             z-index: 2;
-            border-left: 3px solid #ffd700;
+            border-left: 4px solid #ffcc00;
         }
 
-        /* --- EL COCHE (IMAGEN) --- */
+        /* --- EL COCHE (IMAGEN LIMPIA) --- */
         .player-icon {
             position: absolute;
             left: 10px;
-            width: 80px; /* Tamaño de la imagen del coche */
+            width: 90px; /* Tamaño del coche */
             height: auto;
-            transition: left 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            transition: left 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
             z-index: 5;
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+            /* Filtro para que se vean mejor sobre el negro */
+            filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.5));
         }
 
-        /* --- PANELES DE PREGUNTAS --- */
+        /* --- PANELES DE JUGADOR --- */
         .keypad-area-bottom {
             display: flex;
-            gap: 10px;
-            width: 98%;
+            gap: 15px;
+            width: 95%;
             justify-content: center;
             margin-top: 20px;
         }
 
         .player-panel {
-            width: 23%;
+            flex: 1;
             background: white;
-            padding: 10px;
-            border-radius: 12px;
-            border-top: 10px solid;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            border-bottom: 8px solid;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         #panel-p1 { border-color: var(--player1-color); }
@@ -106,51 +106,64 @@
 
         .question-display {
             font-weight: bold;
-            font-size: 0.9em;
-            min-height: 50px;
+            font-size: 1.1em;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 10px;
+            color: #222;
         }
 
         .keypad button {
             width: 100%;
-            margin: 3px 0;
-            padding: 12px 5px;
+            margin: 4px 0;
+            padding: 12px;
             cursor: pointer;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            background: #fdfdfd;
             font-weight: bold;
-            font-size: 0.85em;
             transition: 0.2s;
         }
-        .keypad button:active { background: #e2e6ea; transform: translateY(2px); }
+        .keypad button:hover { background: #f0f0f0; }
+        .keypad button:active { background: #ddd; transform: scale(0.98); }
 
-        /* --- OVERLAY INICIAL --- */
+        /* --- MENSAJES Y PANTALLAS --- */
         #lobby-screen {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        #start-btn {
+            background: #28a745;
+            color: white;
+            padding: 20px 60px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         #countdown-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); color: white; display: none;
-            justify-content: center; align-items: center; font-size: 180px; z-index: 100;
+            justify-content: center; align-items: center; font-size: 200px; z-index: 1000;
         }
     </style>
 </head>
-<body onload="loadQuestions()">
+<body onload="loadData()">
 
     <div id="countdown-overlay"></div>
 
     <div id="lobby-screen">
-        <h1 style="color: #333;">🏎️ GRAN PREMIO SUV 🏎️</h1>
-        <button onclick="startGame()" style="padding: 20px 50px; font-size: 24px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 0 #1e7e34;">¡ARRANCAR!</button>
-        <p id="loading-status" style="margin-top:20px; color:#666;"></p>
+        <h1 style="font-size: 2.5em; margin-bottom: 10px;">🏎️ CARRERA SUV 🏎️</h1>
+        <p style="color: #666; margin-bottom: 30px;">Responde rápido para llegar a la meta</p>
+        <button id="start-btn" onclick="startGame()">¡A CORRER!</button>
+        <p id="status-text" style="margin-top: 20px; font-weight: bold; color: #007bff;"></p>
     </div>
 
     <div id="game-container" class="hidden">
@@ -158,87 +171,81 @@
             <div id="finish-line"></div>
             
             <div class="track">
-                <img id="player-icon-p1" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 1">
+                <img id="player-icon-p1" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png">
             </div>
             <div class="track">
-                <img id="player-icon-p2" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 2">
+                <img id="player-icon-p2" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png">
             </div>
             <div class="track">
-                <img id="player-icon-p3" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 3">
+                <img id="player-icon-p3" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png">
             </div>
             <div class="track">
-                <img id="player-icon-p4" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png" alt="Coche 4">
+                <img id="player-icon-p4" class="player-icon" src="https://images.vexels.com/media/users/3/145078/isolated/preview/d5026c659b3202b62a4213be947c2ff6-ilustracion-de-suv-rojo.png">
             </div>
         </div>
 
         <div class="keypad-area-bottom">
-            <div id="panel-p1" class="player-panel"><div class="question-display" id="q-p1"></div><div class="keypad" data-keypad="1"><button></button><button></button><button></button></div></div>
-            <div id="panel-p2" class="player-panel"><div class="question-display" id="q-p2"></div><div class="keypad" data-keypad="2"><button></button><button></button><button></button></div></div>
-            <div id="panel-p3" class="player-panel"><div class="question-display" id="q-p3"></div><div class="keypad" data-keypad="3"><button></button><button></button><button></button></div></div>
-            <div id="panel-p4" class="player-panel"><div class="question-display" id="q-p4"></div><div class="keypad" data-keypad="4"><button></button><button></button><button></button></div></div>
+            <div id="panel-p1" class="player-panel"><div class="question-display" id="q-p1"></div><div class="keypad" data-kp="1"><button></button><button></button><button></button></div></div>
+            <div id="panel-p2" class="player-panel"><div class="question-display" id="q-p2"></div><div class="keypad" data-kp="2"><button></button><button></button><button></button></div></div>
+            <div id="panel-p3" class="player-panel"><div class="question-display" id="q-p3"></div><div class="keypad" data-kp="3"><button></button><button></button><button></button></div></div>
+            <div id="panel-p4" class="player-panel"><div class="question-display" id="q-p4"></div><div class="keypad" data-kp="4"><button></button><button></button><button></button></div></div>
         </div>
 
-        <h2 id="message-display" style="color: #333; margin-top: 15px;"></h2>
-        <button id="restart-btn" class="hidden" onclick="location.reload()" style="padding: 12px 25px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Jugar otra vez</button>
+        <h2 id="msg" style="margin-top: 20px;"></h2>
+        <button id="reset-btn" class="hidden" onclick="location.reload()" style="padding: 15px 30px; background: #333; color: white; border: none; border-radius: 10px; cursor: pointer;">Nueva Carrera</button>
     </div>
 
     <script>
-        const FALLBACK = [["¿Cuánto es 7x8?", "56", "54", "63"], ["Capital de España", "Madrid", "Barcelona", "Sevilla"], ["Color del cielo", "Azul", "Verde", "Rojo"], ["3 x 3", "9", "6", "12"], ["¿H2O es...?", "Agua", "Aire", "Sal"]];
-        let players = [1,2,3,4].map(id => ({ id, pos: 0, el: document.getElementById(`player-icon-p${id}`), qEl: document.getElementById(`q-p${id}`), kp: document.querySelector(`[data-keypad="${id}"]`), locked: false, ans: '' }));
-        let questions = [];
+        const DB = [["¿7 x 9?", "63", "56", "72"], ["¿Capital de Italia?", "Roma", "Milán", "Nápoles"], ["¿15 + 15?", "30", "25", "35"], ["¿Color Marte?", "Rojo", "Verde", "Gris"], ["¿3 x 4?", "12", "10", "14"]];
+        let players = [1,2,3,4].map(n => ({ n, pos: 0, el: document.getElementById(`player-icon-p${n}`), qEl: document.getElementById(`q-p${n}`), kp: document.querySelector(`[data-kp="${n}"]`), lock: false, win: false }));
 
-        async function loadQuestions() {
-            // Aquí podrías conectar con Google Sheets si lo deseas
-            questions = [...FALLBACK];
-            document.getElementById('loading-status').textContent = "Motores listos. ¡Pulsa el botón!";
-        }
+        function loadData() { document.getElementById('status-text').textContent = "Listo para la carrera."; }
 
         function startGame() {
             document.getElementById('lobby-screen').className = 'hidden';
             const ov = document.getElementById('countdown-overlay');
             ov.style.display = 'flex';
-            let c = 3; ov.textContent = c;
-            const t = setInterval(() => {
-                c--; ov.textContent = c;
-                if(c <= 0) { 
-                    clearInterval(t); ov.style.display = 'none'; 
+            let count = 3; ov.textContent = count;
+            const timer = setInterval(() => {
+                count--; ov.textContent = count;
+                if(count <= 0) {
+                    clearInterval(timer); ov.style.display = 'none';
                     document.getElementById('game-container').classList.remove('hidden');
-                    players.forEach(p => nextQ(p));
+                    players.forEach(p => ask(p));
                 }
             }, 1000);
         }
 
-        function nextQ(p) {
-            const q = questions[Math.floor(Math.random()*questions.length)];
-            p.ans = q[1]; p.qEl.textContent = q[0];
-            let opts = [q[1], q[2], q[3]].sort(() => Math.random()-0.5);
-            p.kp.querySelectorAll('button').forEach((b, i) => { b.textContent = opts[i]; b.dataset.val = opts[i]; });
+        function ask(p) {
+            const q = DB[Math.floor(Math.random()*DB.length)];
+            p.correct = q[1]; p.qEl.textContent = q[0];
+            let options = [q[1], q[2], q[3]].sort(() => Math.random() - 0.5);
+            p.kp.querySelectorAll('button').forEach((b, i) => { b.textContent = options[i]; b.dataset.v = options[i]; });
         }
 
-        async function check(pNum, val) {
-            const p = players.find(x => x.id === pNum);
-            if(p.locked) return;
-            if(val === p.ans) {
+        async function solve(pNum, val) {
+            const p = players.find(x => x.n === pNum);
+            if(p.lock || p.win) return;
+
+            if(val === p.correct) {
                 p.pos++;
-                const arenaWidth = document.getElementById('race-arena').offsetWidth - 110; // Ajuste para que no se salga
-                p.el.style.left = (p.pos / 10) * arenaWidth + "px";
-                if(p.pos >= 10) { 
-                    document.getElementById('message-display').textContent = "🏆 ¡EL COCHE " + p.id + " GANA LA CARRERA! 🏆";
-                    document.getElementById('restart-btn').classList.remove('hidden');
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    return;
-                }
-                nextQ(p);
+                const trackWidth = document.getElementById('race-arena').offsetWidth - 110;
+                p.el.style.left = (p.pos / 10) * trackWidth + "px";
+                if(p.pos >= 10) {
+                    p.win = true;
+                    document.getElementById('msg').innerHTML = `🏆 EL COCHE ${p.n} GANA 🏆`;
+                    document.getElementById('reset-btn').classList.remove('hidden');
+                    confetti();
+                } else { ask(p); }
             } else {
-                p.locked = true; p.qEl.textContent = "💥 ¡MOTOR PARADO!";
-                p.qEl.style.color = "red";
-                await new Promise(r => setTimeout(r, 1500));
-                p.locked = false; p.qEl.style.color = "black"; nextQ(p);
+                p.lock = true; p.qEl.textContent = "💥 ¡FALLO!";
+                await new Promise(r => setTimeout(r, 1200));
+                p.lock = false; ask(p);
             }
         }
 
-        document.querySelectorAll('.keypad').forEach(kp => {
-            kp.addEventListener('click', e => { if(e.target.tagName === 'BUTTON') check(parseInt(kp.dataset.keypad), e.target.dataset.val); });
+        document.querySelectorAll('.keypad').forEach(k => {
+            k.addEventListener('click', e => { if(e.target.tagName === 'BUTTON') solve(parseInt(k.dataset.kp), e.target.dataset.v); });
         });
     </script>
 </body>
